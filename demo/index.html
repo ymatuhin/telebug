@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible"
+        content="ie=edge">
+  <title>Demo</title>
+  <script src="../dist/index.umd.js"></script>
+  <script>
+    errorsToTelegram.init({
+      botId: '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g',
+      chatId: '@studwork_js_logs',
+    });
+
+    setTimeout(() => {
+      errorsToTelegram.addTextToMessage('User', 230);
+    }, 5000)
+  </script>
+</head>
+
+<body>
+  <button onclick="undefinedFunction()">Push me</button>
+  <button onclick="console.warn('Oooo nooo', 123)">Push me</button>
+  <button onclick="console.error('Nonono')">Push me</button>
+</body>
+
+</html>
