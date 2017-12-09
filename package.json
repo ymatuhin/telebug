@@ -1,6 +1,6 @@
 {
   "name": "errors-to-telegram",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Notify about JavaScript errors to custom telegram channel",
   "main": "./dist/index.js",
   "browser": "./dist/index.umd.js",
@@ -16,8 +16,7 @@
     "build:node": "webpack --output-filename index.js",
     "build:node.min": "webpack --output-filename index.min.js -p",
     "build:umd": "BROWSER=true webpack --output-filename index.umd.js",
-    "build:umd.min":
-      "BROWSER=true webpack --output-filename index.umd.min.js -p",
+    "build:umd.min": "BROWSER=true webpack --output-filename index.umd.min.js -p",
     "prewatch": "rm -rf dist",
     "watch": "run-p watch:*",
     "watch:node": "npm run build:node -- -w",
