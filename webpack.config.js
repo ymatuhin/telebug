@@ -7,6 +7,7 @@ const isNode = !isBrowser;
 const common = {
   entry: './src/index.js',
   output: {
+    publicPath: './dist/',
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'umd',
     library: 'errorsToTelegram',

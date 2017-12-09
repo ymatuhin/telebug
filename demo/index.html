@@ -8,23 +8,80 @@
   <meta http-equiv="X-UA-Compatible"
         content="ie=edge">
   <title>Demo</title>
-  <script src="../dist/index.umd.js"></script>
+  <script src="dist/index.umd.js"></script>
+  <script src="html2canvas.min.js"
+          async
+          defer></script>
+  <style>
+    html,
+    body {
+      background: pink;
+      height: 100%;
+      margin: 0;
+    }
+
+    .wrapper {
+      padding: 24px;
+    }
+  </style>
   <script>
     errorsToTelegram.init({
       botId: '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g',
-      chatId: '@studwork_js_logs',
+      chatId: '@ymatuhins_projects_errors',
     });
 
-    setTimeout(() => {
-      errorsToTelegram.addTextToMessage('User', 230);
-    }, 5000)
+    function thowError() {
+      throw new Error('Test error');
+    }
   </script>
 </head>
 
 <body>
-  <button onclick="undefinedFunction()">Push me</button>
-  <button onclick="console.warn('Oooo nooo', 123)">Push me</button>
-  <button onclick="console.error('Nonono')">Push me</button>
+  <div class="wrapper">
+    <br> 1
+    <br> 2
+    <br> 3
+    <br> 4
+    <br> 5
+    <br> 6
+    <br> 7
+    <br> 8
+    <br> 9
+    <br>
+    <button onclick="thowError()">Push me</button>
+    <br> 1
+    <br> 2
+    <br> 3
+    <br> 4
+    <br> 5
+    <br> 6
+    <br> 7
+    <br> 8
+    <br> 9
+    <br>
+    <button onclick="console.warn('Oooo nooo', 123)">Push me</button>
+    <br> 1
+    <br> 2
+    <br> 3
+    <br> 4
+    <br> 5
+    <br> 6
+    <br> 7
+    <br> 8
+    <br> 9
+    <br>
+    <button onclick="console.error('Nonono')">Push me</button>
+    <br> 1
+    <br> 2
+    <br> 3
+    <br> 4
+    <br> 5
+    <br> 6
+    <br> 7
+    <br> 8
+    <br> 9
+    <br>
+  </div>
 </body>
 
 </html>

@@ -70,10 +70,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "./dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -120,6 +120,24 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+exports.default = function (url, formData, cb) {
+  var request = new XMLHttpRequest();
+  request.open('POST', url);
+  request.send(formData);
+  request.onload = cb;
+};
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 exports.default = function (url, params) {
   var request = new XMLHttpRequest();
   request.open('POST', url, true);
@@ -128,7 +146,7 @@ exports.default = function (url, params) {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -145,7 +163,7 @@ exports.default = function (fn) {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -159,9 +177,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var consolePatch = __webpack_require__(0).default;
 
-var unhandleSubscribe =  true ? __webpack_require__(2).default : require('./unhandle.node').default;
+var unhandleSubscribe =  true ? __webpack_require__(3).default : require('./unhandle.node').default;
 
-var httpPost =  true ? __webpack_require__(1).default : require('./http.post.node').default;
+var httpPost =  true ? __webpack_require__(2).default : require('./http.post.node').default;
+
+var httpFormData =  true ? __webpack_require__(1).default : null;
 
 var errorsToTelegram = function () {
   function errorsToTelegram(config) {
@@ -180,8 +200,10 @@ var errorsToTelegram = function () {
       if (this.inited) throw new Error('errorsToTelegram already inited');
       if (!config.botId) throw new Error('botId must be provided');
       if (!config.chatId) throw new Error('chatId must be provided');
+
       this.botId = config.botId;
       this.chatId = config.chatId;
+      this.apiUrl = 'https://api.telegram.org/bot' + this.botId;
       this.inited = true;
 
       unhandleSubscribe(this.handleError.bind(this));
@@ -191,20 +213,35 @@ var errorsToTelegram = function () {
     key: 'handleError',
     value: function handleError(error) {
       var message = this.createErrorMessage(error);
-      this.sendMessage(message);
+      this.handleErrorMessage(message);
     }
   }, {
     key: 'handleConsole',
     value: function handleConsole() {
       var message = this.createConsoleMessage.apply(this, arguments);
-      this.sendMessage(message);
+      this.handleErrorMessage(message);
+    }
+  }, {
+    key: 'handleErrorMessage',
+    value: function handleErrorMessage(message) {
+      var _this = this;
+
+      if (true) {
+        if (!window.html2canvas) return;
+        var onPhotoSent = function onPhotoSent() {
+          return _this.sendMessage(message);
+        };
+        this.makeScreenShot(function (blob) {
+          return _this.sendPhoto(blob, onPhotoSent);
+        });
+      } else this.sendMessage(message);
     }
   }, {
     key: 'getCommonInfo',
     value: function getCommonInfo() {
-      var md = '*==' + ( true ? 'browser' : 'server') + '==*';
-      md +=  true ? '\n*Url* ' + location.href : '';
-      md +=  true ? '\n*UserAgent* ' + navigator.userAgent : '';
+      var md = '*' + ( true ? 'browser' : 'server') + '*';
+      md +=  true ? '\n' + location.href : '';
+      md +=  true ? '\n' + navigator.userAgent : '';
       return md;
     }
   }, {
@@ -216,7 +253,7 @@ var errorsToTelegram = function () {
         args[_key - 1] = arguments[_key];
       }
 
-      md += args.length ? '\n*Console.' + type + '*: `' + args.join(', ') + '`' : '';
+      md += args.length ? '\n`console.' + type + '(' + args.join(', ') + ')`' : '';
       return md;
     }
   }, {
@@ -225,23 +262,38 @@ var errorsToTelegram = function () {
       var md = this.getCommonInfo();
 
       if ((typeof error === 'undefined' ? 'undefined' : _typeof(error)) === 'object') {
-        var _message = error.message || error.error;
-        var stack = error.stack || error.error.stack;
-        var file = error.filename ? error.filename + ':' + error.lineno + ':' + error.colno : '';
-        md += _message ? '\n*Message* ' + _message : '';
-        md += file ? '\n*File* ' + file : '';
-        md += stack ? '\n`' + stack + '`' : '';
+        var originalError = error.error || error;
+        if (originalError.stack) md += '\n`' + originalError.stack + '`';else md += '\n`' + originalError.message + '`';
       } else {
-        md += message ? '\n*Message* ' + error + '\n' : '';
+        md += '\n' + error;
       }
+
       return md;
+    }
+  }, {
+    key: 'makeScreenShot',
+    value: function makeScreenShot(cb) {
+      var promise = html2canvas(document.body);
+      promise.then(function (canvas) {
+        canvas.toBlob(cb, 'image/jpeg', 0.7);
+      });
+    }
+  }, {
+    key: 'sendPhoto',
+    value: function sendPhoto(blob, cb) {
+      var url = this.apiUrl + '/sendPhoto';
+      var formData = new FormData();
+      formData.append('chat_id', this.chatId);
+      formData.append('photo', blob);
+      httpFormData(url, formData, cb);
     }
   }, {
     key: 'sendMessage',
     value: function sendMessage(text) {
-      var url = 'https://api.telegram.org/bot' + this.botId + '/sendMessage';
+      var url = this.apiUrl + '/sendMessage';
       httpPost(url, {
         chat_id: this.chatId,
+        disable_web_page_preview: true,
         parse_mode: 'markdown',
         text: text
       });
