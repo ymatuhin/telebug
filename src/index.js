@@ -1,5 +1,4 @@
 const consolePatch = require('./consolePatch').default;
-const uaParser = IS_BROWSER ? require('ua-parser-js') : null;
 const unhandleSubscribe = IS_BROWSER
   ? require('./unhandle.browser').default
   : require('./unhandle.node').default;
@@ -50,16 +49,8 @@ const telebug = (function() {
       let md = '';
 
       if (IS_BROWSER) {
-        const ua = uaParser(navigator.userAgent);
-        const browserInfo = `${ua.browser.name} ${ua.browser.major}`;
-        const osInfo = `${ua.os.name} ${ua.os.version}`;
-        const uaInfo = `${ua.browser.name} ${ua.browser.major}`;
-        const deviceInfo = `${ua.device.type} ${ua.device.vendor} ${
-          ua.device.model
-        }`;
-        md += `\n${osInfo}, ${uaInfo}`;
-        if (ua.device.type) md += ', ' + deviceInfo;
         md += `\n${location.href}`;
+        md += `\n${navigator.userAgent}`;
       } else {
         md += `Node.js v${process.versions.v8}`;
       }

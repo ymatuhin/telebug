@@ -27,8 +27,5 @@
     "live-server": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "webpack": "^2.2.1"
-  },
-  "dependencies": {
-    "ua-parser-js": "^0.7.17"
   }
 }
