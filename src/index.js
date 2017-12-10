@@ -12,96 +12,104 @@ const httpFormData = IS_BROWSER
   ? require('./http.formData.browser').default
   : null;
 
-class errorsToTelegram {
-  constructor(config) {
-    this.inited = false;
-    this.botId = null;
-    this.chatId = null;
-  }
+const telebug = (function() {
+  let inited = false;
 
-  init(config = {}) {
-    if (this.inited) throw new Error('errorsToTelegram already inited');
-    if (!config.botId) throw new Error('botId must be provided');
+  return function(config = {}) {
     if (!config.chatId) throw new Error('chatId must be provided');
+    if (inited) throw new Error('Telebug already inited');
+    inited = true;
 
-    this.botId = config.botId;
-    this.chatId = config.chatId;
-    this.apiUrl = `https://api.telegram.org/bot${this.botId}`;
-    this.inited = true;
+    const defaultBotId = '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g';
+    const botId = config.botId || defaultBotId;
+    const chatId = config.chatId;
+    const apiUrl = `https://api.telegram.org/bot${botId}`;
+    const customMessages = config.customMessage ? [config.customMessage] : [];
 
-    unhandleSubscribe(this.handleError.bind(this));
-    consolePatch(this.handleConsole.bind(this));
-  }
+    unhandleSubscribe(handleError);
+    consolePatch(handleConsole);
 
-  handleError(error) {
-    const message = this.createErrorMessage(error);
-    this.handleErrorMessage(message);
-  }
-
-  handleConsole(...args) {
-    const message = this.createConsoleMessage(...args);
-    this.handleErrorMessage(message);
-  }
-
-  handleErrorMessage(message) {
-    if (IS_BROWSER) {
-      if (!window.html2canvas) return;
-      const onPhotoSent = () => this.sendMessage(message);
-      this.makeScreenShot(blob => this.sendPhoto(blob, onPhotoSent));
-    } else this.sendMessage(message);
-  }
-
-  getCommonInfo() {
-    let md = `*${IS_BROWSER ? 'browser' : 'server'}*`;
-    md += IS_BROWSER ? `\n${location.href}` : '';
-    md += IS_BROWSER ? `\n${navigator.userAgent}` : '';
-    return md;
-  }
-
-  createConsoleMessage(type, ...args) {
-    let md = this.getCommonInfo();
-    md += args.length ? `\n\`console.${type}(${args.join(', ')})\`` : '';
-    return md;
-  }
-
-  createErrorMessage(error) {
-    let md = this.getCommonInfo();
-
-    if (typeof error === 'object') {
-      const originalError = error.error || error;
-      if (originalError.stack) md += `\n\`${originalError.stack}\``;
-      else md += `\n\`${originalError.message}\``;
-    } else {
-      md += '\n' + error;
+    function handleError(error) {
+      const message = createErrorMessage(error);
+      handleErrorMessage(message);
     }
 
-    return md;
-  }
+    function handleConsole(...args) {
+      const message = createConsoleMessage(...args);
+      handleErrorMessage(message);
+    }
 
-  makeScreenShot(cb) {
-    const promise = html2canvas(document.body);
-    promise.then(canvas => {
-      canvas.toBlob(cb, 'image/jpeg', 0.7);
-    });
-  }
+    function handleErrorMessage(message) {
+      if (IS_BROWSER) {
+        if (!window.html2canvas) return;
+        const onPhotoSent = () => sendMessage(message);
+        makeScreenShot(blob => sendPhoto(blob, onPhotoSent));
+      } else sendMessage(message);
+    }
 
-  sendPhoto(blob, cb) {
-    const url = `${this.apiUrl}/sendPhoto`;
-    const formData = new FormData();
-    formData.append('chat_id', this.chatId);
-    formData.append('photo', blob);
-    httpFormData(url, formData, cb);
-  }
+    function createConsoleMessage(type, ...args) {
+      let md = getCommonInfo();
+      md += args.length ? `\n\`console.${type}(${args.join(', ')})\`` : '';
+      return md;
+    }
 
-  sendMessage(text) {
-    const url = `${this.apiUrl}/sendMessage`;
-    httpPost(url, {
-      chat_id: this.chatId,
-      disable_web_page_preview: true,
-      parse_mode: 'markdown',
-      text,
-    });
-  }
-}
+    function createErrorMessage(error) {
+      let md = getCommonInfo();
 
-module.exports = new errorsToTelegram();
+      if (typeof error === 'object') {
+        const originalError = error.error || error;
+        if (originalError.stack) md += `\n\`${originalError.stack}\``;
+        else md += `\n\`${originalError.message}\``;
+      } else {
+        md += '\n' + error;
+      }
+
+      return md;
+    }
+
+    function getCommonInfo() {
+      let md = `*${IS_BROWSER ? 'browser' : 'server'}*`;
+      md += IS_BROWSER ? `\n${location.href}` : '';
+      md += IS_BROWSER ? `\n${navigator.userAgent}` : '';
+      customMessages.forEach(msg => (md += `\n${msg}`));
+      return md;
+    }
+
+    function makeScreenShot(cb) {
+      const promise = html2canvas(document.body);
+      promise.then(canvas => {
+        canvas.toBlob(cb, 'image/jpeg', 0.7);
+      });
+    }
+
+    function sendPhoto(blob, cb) {
+      const url = `${apiUrl}/sendPhoto`;
+      const formData = new FormData();
+      formData.append('chat_id', chatId);
+      formData.append('photo', blob);
+      httpFormData(url, formData, cb);
+    }
+
+    function sendMessage(text) {
+      const url = `${apiUrl}/sendMessage`;
+      httpPost(url, {
+        chat_id: chatId,
+        disable_web_page_preview: true,
+        parse_mode: 'markdown',
+        text,
+      });
+    }
+
+    function addCustomMessage(message) {
+      customMessages.push(message);
+    }
+
+    return {
+      sendMessage,
+      sendPhoto,
+      addCustomMessage,
+    };
+  };
+})();
+
+module.exports = telebug;

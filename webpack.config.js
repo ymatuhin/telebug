@@ -10,7 +10,7 @@ const common = {
     publicPath: './dist/',
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'umd',
-    library: 'errorsToTelegram',
+    library: 'telebug',
   },
   devtool: 'source-map',
   module: {

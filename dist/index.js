@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define(["https", "process"], factory);
 	else if(typeof exports === 'object')
-		exports["errorsToTelegram"] = factory(require("https"), require("process"));
+		exports["telebug"] = factory(require("https"), require("process"));
 	else
-		root["errorsToTelegram"] = factory(root["https"], root["process"]);
+		root["telebug"] = factory(root["https"], root["process"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -175,10 +175,6 @@ exports.default = function (fn) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var consolePatch = __webpack_require__(0).default;
 
 var unhandleSubscribe =  false ? require('./unhandle.browser').default : __webpack_require__(2).default;
@@ -187,71 +183,49 @@ var httpPost =  false ? require('./http.post.browser').default : __webpack_requi
 
 var httpFormData =  false ? require('./http.formData.browser').default : null;
 
-var errorsToTelegram = function () {
-  function errorsToTelegram(config) {
-    _classCallCheck(this, errorsToTelegram);
+var telebug = function () {
+  var inited = false;
 
-    this.inited = false;
-    this.botId = null;
-    this.chatId = null;
-  }
+  return function () {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-  _createClass(errorsToTelegram, [{
-    key: 'init',
-    value: function init() {
-      var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    if (!config.chatId) throw new Error('chatId must be provided');
+    if (inited) throw new Error('Telebug already inited');
+    inited = true;
 
-      if (this.inited) throw new Error('errorsToTelegram already inited');
-      if (!config.botId) throw new Error('botId must be provided');
-      if (!config.chatId) throw new Error('chatId must be provided');
+    var defaultBotId = '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g';
+    var botId = config.botId || defaultBotId;
+    var chatId = config.chatId;
+    var apiUrl = 'https://api.telegram.org/bot' + botId;
+    var customMessages = config.customMessage ? [config.customMessage] : [];
 
-      this.botId = config.botId;
-      this.chatId = config.chatId;
-      this.apiUrl = 'https://api.telegram.org/bot' + this.botId;
-      this.inited = true;
+    unhandleSubscribe(handleError);
+    consolePatch(handleConsole);
 
-      unhandleSubscribe(this.handleError.bind(this));
-      consolePatch(this.handleConsole.bind(this));
+    function handleError(error) {
+      var message = createErrorMessage(error);
+      handleErrorMessage(message);
     }
-  }, {
-    key: 'handleError',
-    value: function handleError(error) {
-      var message = this.createErrorMessage(error);
-      this.handleErrorMessage(message);
-    }
-  }, {
-    key: 'handleConsole',
-    value: function handleConsole() {
-      var message = this.createConsoleMessage.apply(this, arguments);
-      this.handleErrorMessage(message);
-    }
-  }, {
-    key: 'handleErrorMessage',
-    value: function handleErrorMessage(message) {
-      var _this = this;
 
+    function handleConsole() {
+      var message = createConsoleMessage.apply(undefined, arguments);
+      handleErrorMessage(message);
+    }
+
+    function handleErrorMessage(message) {
       if (false) {
         if (!window.html2canvas) return;
         var onPhotoSent = function onPhotoSent() {
-          return _this.sendMessage(message);
+          return sendMessage(message);
         };
-        this.makeScreenShot(function (blob) {
-          return _this.sendPhoto(blob, onPhotoSent);
+        makeScreenShot(function (blob) {
+          return sendPhoto(blob, onPhotoSent);
         });
-      } else this.sendMessage(message);
+      } else sendMessage(message);
     }
-  }, {
-    key: 'getCommonInfo',
-    value: function getCommonInfo() {
-      var md = '*' + ( false ? 'browser' : 'server') + '*';
-      md +=  false ? '\n' + location.href : '';
-      md +=  false ? '\n' + navigator.userAgent : '';
-      return md;
-    }
-  }, {
-    key: 'createConsoleMessage',
-    value: function createConsoleMessage(type) {
-      var md = this.getCommonInfo();
+
+    function createConsoleMessage(type) {
+      var md = getCommonInfo();
 
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
@@ -260,10 +234,9 @@ var errorsToTelegram = function () {
       md += args.length ? '\n`console.' + type + '(' + args.join(', ') + ')`' : '';
       return md;
     }
-  }, {
-    key: 'createErrorMessage',
-    value: function createErrorMessage(error) {
-      var md = this.getCommonInfo();
+
+    function createErrorMessage(error) {
+      var md = getCommonInfo();
 
       if ((typeof error === 'undefined' ? 'undefined' : _typeof(error)) === 'object') {
         var originalError = error.error || error;
@@ -274,40 +247,55 @@ var errorsToTelegram = function () {
 
       return md;
     }
-  }, {
-    key: 'makeScreenShot',
-    value: function makeScreenShot(cb) {
+
+    function getCommonInfo() {
+      var md = '*' + ( false ? 'browser' : 'server') + '*';
+      md +=  false ? '\n' + location.href : '';
+      md +=  false ? '\n' + navigator.userAgent : '';
+      customMessages.forEach(function (msg) {
+        return md += '\n' + msg;
+      });
+      return md;
+    }
+
+    function makeScreenShot(cb) {
       var promise = html2canvas(document.body);
       promise.then(function (canvas) {
         canvas.toBlob(cb, 'image/jpeg', 0.7);
       });
     }
-  }, {
-    key: 'sendPhoto',
-    value: function sendPhoto(blob, cb) {
-      var url = this.apiUrl + '/sendPhoto';
+
+    function sendPhoto(blob, cb) {
+      var url = apiUrl + '/sendPhoto';
       var formData = new FormData();
-      formData.append('chat_id', this.chatId);
+      formData.append('chat_id', chatId);
       formData.append('photo', blob);
       httpFormData(url, formData, cb);
     }
-  }, {
-    key: 'sendMessage',
-    value: function sendMessage(text) {
-      var url = this.apiUrl + '/sendMessage';
+
+    function sendMessage(text) {
+      var url = apiUrl + '/sendMessage';
       httpPost(url, {
-        chat_id: this.chatId,
+        chat_id: chatId,
         disable_web_page_preview: true,
         parse_mode: 'markdown',
         text: text
       });
     }
-  }]);
 
-  return errorsToTelegram;
+    function addCustomMessage(message) {
+      customMessages.push(message);
+    }
+
+    return {
+      sendMessage: sendMessage,
+      sendPhoto: sendPhoto,
+      addCustomMessage: addCustomMessage
+    };
+  };
 }();
 
-module.exports = new errorsToTelegram();
+module.exports = telebug;
 
 /***/ }),
 /* 4 */
