@@ -34,13 +34,16 @@ const telebug = (function() {
 
     function createErrorMessage(error) {
       let md = getCommonInfo();
-      if (error.stack) return (md += `\n\`${error.stack}\``);
 
       if (error.filename)
         md += `\nFile: ${error.filename}:${error.lineno}:${error.colno}`;
-      md += `\nMessage: ${error.message}`;
-      if (error.error && error.error.stack) md += `\n\`${error.error.stack}\``;
-      else md += `\n\`${JSON.stringify(error.error)}\``;
+      if (error.message) md += `\nMessage: ${error.message}`;
+
+      if (error.stack) return (md += `\n\`${error.stack}\``);
+      else if (error.error && error.error.stack)
+        md += `\n\`${error.error.stack}\``;
+      else if (error.error) md += `\n\`${error.error}\``;
+      else md += `\n\`${error}\``;
 
       return md;
     }
