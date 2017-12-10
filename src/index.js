@@ -71,12 +71,12 @@ const telebug = (function() {
     function sendMessage(text) {
       console.info(text);
       const url = `${apiUrl}/sendMessage`;
-      // httpPost(url, {
-      //   chat_id: chatId,
-      //   disable_web_page_preview: true,
-      //   parse_mode: 'markdown',
-      //   text,
-      // });
+      httpPost(url, {
+        chat_id: chatId,
+        disable_web_page_preview: true,
+        parse_mode: 'markdown',
+        text,
+      });
     }
 
     function addCustomMessage(message) {
