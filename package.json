@@ -5,24 +5,18 @@
   "main": "./dist/index.js",
   "browser": "./dist/index.umd.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest -w",
-    "dev": "run-p server watch",
-    "server": "live-server ./demo",
-    "start:browser": "open './demo/index.html'",
-    "start:node": "yarn build:node && node ./demo/node.js",
-    "prebuild": "rm -rf dist",
-    "build": "run-p build:*",
-    "build:node": "webpack --output-filename index.js",
-    "build:node.min": "webpack --output-filename index.min.js -p",
-    "build:umd": "BROWSER=true webpack --output-filename index.umd.js",
-    "build:umd.min": "BROWSER=true webpack --output-filename index.umd.min.js -p",
-    "prewatch": "rm -rf dist",
+    "start": "run-p start:* watch",
+    "start:browser": "live-server .",
+    "start:node": "node ./demo.node.js",
     "watch": "run-p watch:*",
     "watch:node": "npm run build:node -- -w",
-    "watch:node.min": "npm run build:node.min -- -w",
     "watch:umd": "npm run build:umd -- -w",
-    "watch:umd.min": "npm run build:umd.min -- -w"
+    "prebuild": "rm -rf dist",
+    "build": "run-p build:*",
+    "build:node": "webpack --output-filename index.js -p",
+    "build:umd": "BROWSER=true webpack --output-filename index.umd.js -p",
+    "test": "jest",
+    "test:watch": "jest -w"
   },
   "license": "MIT",
   "devDependencies": {
@@ -33,5 +27,8 @@
     "live-server": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "ua-parser-js": "^0.7.17"
   }
 }

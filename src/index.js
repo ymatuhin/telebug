@@ -1,5 +1,5 @@
 const consolePatch = require('./consolePatch').default;
-
+const uaParser = IS_BROWSER ? require('ua-parser-js') : null;
 const unhandleSubscribe = IS_BROWSER
   ? require('./unhandle.browser').default
   : require('./unhandle.node').default;
@@ -8,9 +8,7 @@ const httpPost = IS_BROWSER
   ? require('./http.post.browser').default
   : require('./http.post.node').default;
 
-const httpFormData = IS_BROWSER
-  ? require('./http.formData.browser').default
-  : null;
+const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
 
 const telebug = (function() {
   let inited = false;
@@ -26,26 +24,8 @@ const telebug = (function() {
     const apiUrl = `https://api.telegram.org/bot${botId}`;
     const customMessages = config.customMessage ? [config.customMessage] : [];
 
-    unhandleSubscribe(handleError);
-    consolePatch(handleConsole);
-
-    function handleError(error) {
-      const message = createErrorMessage(error);
-      handleErrorMessage(message);
-    }
-
-    function handleConsole(...args) {
-      const message = createConsoleMessage(...args);
-      handleErrorMessage(message);
-    }
-
-    function handleErrorMessage(message) {
-      if (IS_BROWSER) {
-        if (!window.html2canvas) return;
-        const onPhotoSent = () => sendMessage(message);
-        makeScreenShot(blob => sendPhoto(blob, onPhotoSent));
-      } else sendMessage(message);
-    }
+    unhandleSubscribe(compose(sendMessage, createErrorMessage));
+    consolePatch(compose(sendMessage, createConsoleMessage));
 
     function createConsoleMessage(type, ...args) {
       let md = getCommonInfo();
@@ -55,49 +35,48 @@ const telebug = (function() {
 
     function createErrorMessage(error) {
       let md = getCommonInfo();
+      if (error.stack) return (md += `\n\`${error.stack}\``);
 
-      if (typeof error === 'object') {
-        const originalError = error.error || error;
-        if (originalError.stack) md += `\n\`${originalError.stack}\``;
-        else md += `\n\`${originalError.message}\``;
-      } else {
-        md += '\n' + error;
-      }
+      if (error.filename)
+        md += `\nFile: ${error.filename}:${error.lineno}:${error.colno}`;
+      md += `\nMessage: ${error.message}`;
+      if (error.error && error.error.stack) md += `\n\`${error.error.stack}\``;
+      else md += `\n\`${JSON.stringify(error.error)}\``;
 
       return md;
     }
 
     function getCommonInfo() {
-      let md = `*${IS_BROWSER ? 'browser' : 'server'}*`;
-      md += IS_BROWSER ? `\n${location.href}` : '';
-      md += IS_BROWSER ? `\n${navigator.userAgent}` : '';
+      let md = '';
+
+      if (IS_BROWSER) {
+        const ua = uaParser(navigator.userAgent);
+        const browserInfo = `${ua.browser.name} ${ua.browser.major}`;
+        const osInfo = `${ua.os.name} ${ua.os.version}`;
+        const uaInfo = `${ua.browser.name} ${ua.browser.major}`;
+        const deviceInfo = `${ua.device.type} ${ua.device.vendor} ${
+          ua.device.model
+        }`;
+        md += `\n${osInfo}, ${uaInfo}`;
+        if (ua.device.type) md += ', ' + deviceInfo;
+        md += `\n${location.href}`;
+      } else {
+        md += `Node.js v${process.versions.v8}`;
+      }
+
       customMessages.forEach(msg => (md += `\n${msg}`));
       return md;
     }
 
-    function makeScreenShot(cb) {
-      const promise = html2canvas(document.body);
-      promise.then(canvas => {
-        canvas.toBlob(cb, 'image/jpeg', 0.7);
-      });
-    }
-
-    function sendPhoto(blob, cb) {
-      const url = `${apiUrl}/sendPhoto`;
-      const formData = new FormData();
-      formData.append('chat_id', chatId);
-      formData.append('photo', blob);
-      httpFormData(url, formData, cb);
-    }
-
     function sendMessage(text) {
+      console.info(text);
       const url = `${apiUrl}/sendMessage`;
-      httpPost(url, {
-        chat_id: chatId,
-        disable_web_page_preview: true,
-        parse_mode: 'markdown',
-        text,
-      });
+      // httpPost(url, {
+      //   chat_id: chatId,
+      //   disable_web_page_preview: true,
+      //   parse_mode: 'markdown',
+      //   text,
+      // });
     }
 
     function addCustomMessage(message) {
@@ -106,7 +85,6 @@ const telebug = (function() {
 
     return {
       sendMessage,
-      sendPhoto,
       addCustomMessage,
     };
   };
