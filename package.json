@@ -1,6 +1,6 @@
 {
   "name": "telebug",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Notify about JavaScript errors to custom telegram channel",
   "main": "./dist/index.js",
   "browser": "./dist/index.umd.js",
