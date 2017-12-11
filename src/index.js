@@ -20,6 +20,7 @@ const telebug = (function() {
     const defaultBotId = '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g';
     const botId = config.botId || defaultBotId;
     const chatId = config.chatId;
+    const corsEnabled = Boolean(config.cors) || false;
     const apiUrl = `https://api.telegram.org/bot${botId}`;
     const customMessages = config.customMessage ? [config.customMessage] : [];
 
@@ -33,11 +34,17 @@ const telebug = (function() {
     }
 
     function createErrorMessage(error) {
+      const isCorsError = error.message === 'Script error.';
       let md = getCommonInfo();
 
       if (typeof error === 'object') {
+        if (!corsEnabled && isCorsError) return;
+
+        const corsError = `Error in script from another domain. You should add \`crossorigin="anonymous"\` attribute to the script tag or set \`Access-Control-Allow-Origin\` header on the server.`;
+        if (isCorsError) md += `\n${corsError}`;
+        else if (error.message) md += `\n${error.message}`;
+
         const pos = `${error.lineno}:${error.colno}`;
-        if (error.message) md += `\n${error.message}`;
         if (error.filename) md += `\n${error.filename}:${pos}`;
 
         if (error.error && error.error.stack)
@@ -65,7 +72,7 @@ const telebug = (function() {
     }
 
     function sendMessage(text) {
-      console.info(text);
+      if (!text) return;
       const url = `${apiUrl}/sendMessage`;
       httpPost(url, {
         chat_id: chatId,
