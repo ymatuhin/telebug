@@ -37,9 +37,13 @@ const telebug = (function() {
       const localError = error.error || error;
 
       if (localError.message) md += `\n${localError.message}`;
+      else md += `\n${JSON.stringify(localError)}`;
+
+      if (localError.filename) {
+        const pos = `${localError.lineno}:${localError.colno}`;
+        md += `\n${localError.filename}:${pos}`;
+      }
       if (localError.stack) md += `\n\`${localError.stack}\``;
-      if (!localError.message && !localError.stack)
-        md += `\n${JSON.stringify(localError)}`;
 
       return md;
     }
