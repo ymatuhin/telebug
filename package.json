@@ -6,7 +6,7 @@
   "browser": "./dist/index.umd.js",
   "scripts": {
     "start": "run-p start:* watch",
-    "start:browser": "live-server .",
+    "start:browser": "live-server --https=node_modules/live-server-https .",
     "start:node": "node ./demo.node.js",
     "watch": "run-p watch:*",
     "watch:node": "npm run build:node -- -w",
@@ -27,5 +27,9 @@
     "live-server": "^1.2.0",
     "npm-run-all": "^4.1.2",
     "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "live-server-https": "^0.0.2",
+    "ua-parser-js": "^0.7.17"
   }
 }

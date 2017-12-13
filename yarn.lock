@@ -2356,6 +2356,10 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
+live-server-https@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/live-server-https/-/live-server-https-0.0.2.tgz#98d4361b1af94021fc36423712fa8142e7fe8e6f"
+
 live-server@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/live-server/-/live-server-1.2.0.tgz#4498644bbf81a66f18dd8dffdef61c4c1c374ca3"
@@ -3582,6 +3586,10 @@ type-check@~0.3.2:
   resolved "https://registry.yarnpkg.com/type-check/-/type-check-0.3.2.tgz#5884cab512cf1d355e3fb784f30804b2b520db72"
   dependencies:
     prelude-ls "~1.1.2"
+
+ua-parser-js@^0.7.17:
+  version "0.7.17"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.17.tgz#e9ec5f9498b9ec910e7ae3ac626a805c4d09ecac"
 
 uglify-js@^2.6, uglify-js@^2.8.27:
   version "2.8.29"

@@ -7,6 +7,6 @@ const config = {
 
 const bugInstance = telebug(config);
 bugInstance.addCustomMessage(`From demo node.js`);
-telebug(config);
+// telebug(config);
 
 qwerty();
