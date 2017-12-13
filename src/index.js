@@ -86,9 +86,13 @@ const telebug = (function() {
       if (IS_BROWSER) {
         const ua = upParser(navigator.userAgent);
         const majorVersion = (ua.browser.version || '').split('.')[0];
-        const browser = `${ua.browser.name} ${majorVersion}`;
-        const os = `${ua.os.name} ${ua.os.version}`;
-        md += `\*Browser* ${browser} on ${os}`;
+        if (ua.browser.name && ua.os.name) {
+          const browser = ua.browser.name
+            ? `${ua.browser.name} ${majorVersion}`
+            : '';
+          const os = ua.os.name ? `${ua.os.name} ${ua.os.version || ''}` : '';
+          md += `\*Browser* ${browser} on ${os}`;
+        }
         md += `\n${location.href}`;
       } else {
         md += `*Node* ${process.versions.v8}`;
