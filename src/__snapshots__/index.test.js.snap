@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`throw errors on init 1`] = `"❗️ Error: botId must be provided"`;
+
+exports[`throw errors on init 2`] = `"❗️ Error: botId must be provided"`;
+
+exports[`throw errors on init 3`] = `"❗️ Error: chatId must be provided"`;
+
+exports[`throw errors on init 4`] = `"❗️ Error: telebug already inited"`;

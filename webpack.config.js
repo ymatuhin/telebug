@@ -25,8 +25,7 @@ const common = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      IS_BROWSER: JSON.stringify(isBrowser),
-      IS_NODE: JSON.stringify(isNode),
+      'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
     }),
   ],
 };

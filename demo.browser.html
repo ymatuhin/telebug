@@ -12,7 +12,7 @@
   <script>
     telebug({
       botId: '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g',
-      chatId: '@ymatuhins_projects_errors',
+      chatId: '@telebug_development',
     });
   </script>
 
@@ -36,7 +36,7 @@
 <body>
   <div class="wrapper">
     <button onclick="testErrorFromFile()">testErrorFromFile</button>
-    <button onclick="throw new Error('Browser error test')">new Error('Browser error test')</button>
+    <button onclick="throw new Error('<html>!@#$%^&*()_=+')">new Error()</button>
     <button onclick="throw [1,2,3]">[1,2,3]</button>
     <button onclick="throw { test: 1 }">{ test: 1 }</button>
     <button onclick="throw null">null</button>
