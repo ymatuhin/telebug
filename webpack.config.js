@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const { version } = require('./package.json');
 
 const isBrowser = !!process.env.BROWSER;
 const isNode = !isBrowser;
@@ -26,7 +27,9 @@ const common = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
+      'process.env.VERSION': JSON.stringify(version),
     }),
+    new webpack.BannerPlugin(version),
   ],
 };
 

@@ -10,7 +10,9 @@ export default function getCommonInfo(customMessages) {
     const majorVersion = (ua.browser.version || '').split('.')[0];
     const browser = ua.browser.name ? `${ua.browser.name} ${majorVersion}` : '';
     const os = ua.os.name ? `${ua.os.name} ${ua.os.version || ''}` : '';
-    md += `\<strong>Browser</strong> ${browser} on ${os}`;
+    md += `\<strong>Browser</strong> ${browser} on ${os}     <code>${
+      process.env.VERSION
+    }</code>`;
   }
 
   md += `\n${location.href}`;
