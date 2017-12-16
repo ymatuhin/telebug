@@ -3,3 +3,7 @@ function testErrorFromFile() {
     notFound();
   })();
 }
+
+function promiseUnhandle() {
+  Promise.reject(new Error('woops'));
+}

@@ -6,7 +6,7 @@
   "browser": "./dist/index.umd.js",
   "scripts": {
     "start": "run-p start:* watch",
-    "start:browser": "live-server --quiet --no-browser .",
+    "start:browser": "live-server --no-browser .",
     "start:node": "nodemon ./demo/index.node.js",
     "prebuild": "rm -rf dist",
     "build": "webpack -p",

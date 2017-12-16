@@ -24,9 +24,12 @@ export default class Telebug {
     this.disableCorsMessage = disableCorsMessage;
     this.apiUrl = `https://api.telegram.org/bot${botId}/sendMessage`;
 
-    const currentHost = location.hostname || location.host;
-    const hostsDefined = activeHosts && activeHosts.length;
-    if (hostsDefined && activeHosts.indexOf(currentHost) === -1) return;
+    if (process.env.BROWSER) {
+      const currentHost = location.hostname || location.host;
+      const hostsDefined = activeHosts && activeHosts.length;
+      if (hostsDefined && activeHosts.indexOf(currentHost) === -1) return;
+    }
+
     this.init();
   }
 
@@ -49,6 +52,8 @@ export default class Telebug {
     const errorInfo = getErrorInfo(error);
     const errorMd = createErrorMessage(errorInfo);
 
+    if (process.env.DEV) console.info(`# errorInfo`, errorInfo);
+
     if (this.preventSend(errorMd, errorInfo)) return;
     this.sendMessage(`${commonMd}${errorMd}`);
   }
@@ -62,6 +67,11 @@ export default class Telebug {
   }
 
   sendMessage(text) {
+    if (process.env.DEV) {
+      console.info(`# send to telegram\n`, text);
+      return;
+    }
+
     httpPost(this.apiUrl, {
       chat_id: this.chatId,
       disable_web_page_preview: true,

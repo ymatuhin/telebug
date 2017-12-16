@@ -1,26 +1,29 @@
 import isObject from './isObject';
 import { corsError } from '../config';
 
+const getErrorProperty = (error, property) => {
+  if (error.error && error.error[property]) return error.error[property];
+  if (error.reason && error.reason[property]) return error.reason[property];
+  if (error[property]) return error[property];
+};
+
 export default error => {
+  const info = {};
+
   if (isObject(error)) {
-    const isCors = /^Script error\.?$/;
-    const info = {};
-    const hasErrorObj = error.error && error.error.message;
+    const message = getErrorProperty(error, 'message') || error.toString();
+    const isCors = /^Script error\.?$/.test(message);
+    info.message = isCors ? corsError : message;
 
-    if (hasErrorObj) info.message = error.error.message;
-    if (!info.message) info.message = error.message || error.type;
-    if (!info.message) info.message = error.toString();
+    const filename = getErrorProperty(error, 'filename');
+    const lineno = getErrorProperty(error, 'lineno');
+    const colno = getErrorProperty(error, 'colno');
+    if (filename) info.file = `${filename}:${lineno}:${colno}`;
 
-    if (isCors.test(info.message)) info.message = corsError;
-
-    if (error.filename)
-      info.file = `${error.filename}:${error.lineno}:${error.colno}`;
-
-    if (error.stack) info.stack = error.stack;
-    else if (error.error && error.error.stack) info.stack = error.error.stack;
-
-    return info;
+    const stack = getErrorProperty(error, 'stack');
+    if (stack) info.stack = stack;
   } else {
-    return { message: JSON.stringify(error) };
+    info.message = JSON.stringify(error);
   }
+  return info;
 };
