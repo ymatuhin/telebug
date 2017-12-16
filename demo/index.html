@@ -38,6 +38,7 @@
   <div class="wrapper">
     <button onclick="testErrorFromFile()">testErrorFromFile</button>
     <button onclick="promiseUnhandle()">promiseUnhandle</button>
+    <button onclick="eval('hoo bar')">syntax error</button>
     <button onclick="throw new Error('<html>!@#$%^&*()_=+')">new Error()</button>
     <button onclick="throw [1,2,3]">[1,2,3]</button>
     <button onclick="throw { test: 1 }">{ test: 1 }</button>

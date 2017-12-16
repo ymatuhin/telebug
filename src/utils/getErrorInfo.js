@@ -11,7 +11,14 @@ export default error => {
   const info = {};
 
   if (isObject(error)) {
-    const message = getErrorProperty(error, 'message') || error.toString();
+    const name = getErrorProperty(error, 'name');
+    if (name) info.name = name;
+
+    const message =
+      getErrorProperty(error, 'message') ||
+      getErrorProperty(error, 'description') ||
+      error.toString();
+
     const isCors = /^Script error\.?$/.test(message);
     info.message = isCors ? corsError : message;
 
@@ -22,6 +29,12 @@ export default error => {
 
     const stack = getErrorProperty(error, 'stack');
     if (stack) info.stack = stack;
+
+    if (typeof error.toSource === 'function') info.source = error.toSource();
+    if (typeof error.number === 'number') {
+      info.errorCode = error.number & 0xffff;
+      info.facilityCode = (error.number >> 16) & 0x1fff;
+    }
   } else {
     info.message = JSON.stringify(error);
   }

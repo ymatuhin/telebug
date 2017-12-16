@@ -10,3 +10,6 @@ bugInstance.addCustomMessage(`From demo node.js`);
 
 setTimeout(() => qwerty(), 100);
 setTimeout(Promise.reject(new Error('woops')), 200);
+
+// syntax error
+eval('hoo bar');
