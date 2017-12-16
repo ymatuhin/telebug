@@ -2,9 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const { version } = require('./package.json');
 
-const isBrowser = !!process.env.BROWSER;
-const isNode = !isBrowser;
-
 const common = {
   entry: './src/index.js',
   output: {
@@ -12,6 +9,7 @@ const common = {
     path: path.resolve(__dirname, 'dist'),
     libraryTarget: 'umd',
     library: 'telebug',
+    filename: 'index.js',
   },
   devtool: 'source-map',
   module: {
@@ -26,7 +24,7 @@ const common = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.BROWSER': JSON.stringify(process.env.BROWSER),
+      'process.env.DEV': JSON.stringify(process.env.DEV),
       'process.env.VERSION': JSON.stringify(version),
     }),
     new webpack.BannerPlugin(version),
@@ -42,6 +40,16 @@ const serverConfig = {
 const clientConfig = {
   ...common,
   target: 'web',
+  output: {
+    ...common.output,
+    filename: 'index.umd.js',
+  },
+  plugins: [
+    ...common.plugins,
+    new webpack.DefinePlugin({
+      'process.env.BROWSER': JSON.stringify(true),
+    }),
+  ],
 };
 
-module.exports = isBrowser ? clientConfig : serverConfig;
+module.exports = [clientConfig, serverConfig];

@@ -1,5 +1,5 @@
 const getErrorInfo = require('./getErrorInfo.js').default;
-const { corsError } = require('./config.js');
+const { corsError } = require('../config.js');
 
 test('getErrorInfo', () => {
   const fn = () => {};

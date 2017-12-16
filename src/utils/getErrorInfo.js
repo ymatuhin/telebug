@@ -1,7 +1,7 @@
 import isObject from './isObject';
-const { corsError } = require('./config.js');
+import { corsError } from '../config';
 
-export default function getErrorInfo(error) {
+export default error => {
   if (isObject(error)) {
     const isCors = /^Script error\.?$/;
     const info = {};
@@ -23,4 +23,4 @@ export default function getErrorInfo(error) {
   } else {
     return { message: JSON.stringify(error) };
   }
-}
+};

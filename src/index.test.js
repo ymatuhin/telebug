@@ -1,4 +1,4 @@
-const telebug = require('./index.js');
+import telebug from './index.js';
 
 test('throw errors on init', () => {
   const chatId = '123';

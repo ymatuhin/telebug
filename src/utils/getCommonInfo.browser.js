@@ -1,4 +1,4 @@
-const uaParser = process.env.BROWSER ? require('ua-parser-js') : () => {};
+const uaParser = require('ua-parser-js');
 
 export default function getCommonInfo(customMessages) {
   let md = '';
