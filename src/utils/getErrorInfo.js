@@ -35,6 +35,10 @@ export default error => {
       info.errorCode = error.number & 0xffff;
       info.facilityCode = (error.number >> 16) & 0x1fff;
     }
+
+    const stackHasErrorInfo =
+      info.message && info.stack && info.stack.indexOf(info.message) !== -1;
+    if (stackHasErrorInfo) delete info.message;
   } else {
     info.message = JSON.stringify(error);
   }

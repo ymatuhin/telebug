@@ -1,9 +1,15 @@
 {
   "name": "telebug",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Notify about JavaScript errors to custom telegram channel",
   "main": "./dist/index.js",
   "browser": "./dist/index.umd.js",
+  "author": "Yury Matuhin <ym@ymatuhin.ru>",
+  "homepage": "https://github.com/ymatuhin/telebug",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ymatuhin/telebug.git"
+  },
   "scripts": {
     "start": "run-p start:* watch",
     "start:browser": "live-server --no-browser .",
@@ -33,5 +39,6 @@
   "dependencies": {
     "lodash.escape": "^4.0.1",
     "ua-parser-js": "^0.7.17"
-  }
+  },
+  "keywords": ["telegram", "errors"]
 }
