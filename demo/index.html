@@ -13,12 +13,9 @@
     telebug({
       botId: '474186924:AAGtoPx1A_q9MoLdhRCin5EmGwN7xlC_21g',
       chatId: '@telebug_development',
-      activeHosts: ['127.0.0.1', 'ymatuhin.ru'],
       disableCorsMessage: true,
     })
   </script>
-
-  <script src="./index.browser.js"></script>
 
   <style>
     html,
@@ -36,8 +33,9 @@
 
 <body>
   <div class="wrapper">
-    <button onclick="testErrorFromFile()">testErrorFromFile</button>
-    <button onclick="promiseUnhandle()">promiseUnhandle</button>
+    <button onclick="Promise.reject(fetch('qweqweqwe'))">Reject fetch('qweqweqwe')</button>
+    <button onclick="Promise.reject(123)">Promise.reject(123)</button>
+    <button onclick="JSON.parse('{x,2')">json parse error</button>
     <button onclick="eval('hoo bar')">syntax error</button>
     <button onclick="throw new Error('<html>!@#$%^&*()_=+')">new Error()</button>
     <button onclick="throw [1,2,3]">[1,2,3]</button>

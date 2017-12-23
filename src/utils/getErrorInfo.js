@@ -1,9 +1,8 @@
-import isObject from './isObject';
 import { corsError } from '../config';
+import isObject from './isObject';
 
 const getErrorProperty = (error, property) => {
   if (error.error && error.error[property]) return error.error[property];
-  if (error.reason && error.reason[property]) return error.reason[property];
   if (error[property]) return error[property];
 };
 
@@ -30,7 +29,9 @@ export default error => {
     const stack = getErrorProperty(error, 'stack');
     if (stack) info.stack = stack;
 
-    if (typeof error.toSource === 'function') info.source = error.toSource();
+    const reason = getErrorProperty(error, 'reason');
+    if (reason) info.reason = reason;
+
     if (typeof error.number === 'number') {
       info.errorCode = error.number & 0xffff;
       info.facilityCode = (error.number >> 16) & 0x1fff;

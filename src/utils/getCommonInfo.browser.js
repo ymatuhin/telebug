@@ -1,4 +1,5 @@
 const uaParser = require('ua-parser-js');
+const getBrowserSize = require('./getBrowserSize').default;
 
 export default function getCommonInfo(customMessages) {
   let md = '';
@@ -13,6 +14,11 @@ export default function getCommonInfo(customMessages) {
     md += `\<strong>${browser}</strong> on ${os} by telebug ${
       process.env.VERSION
     }`;
+  }
+
+  const [width, height] = getBrowserSize();
+  if (width && height) {
+    md += `\nWindow: ${width}x${height}`;
   }
 
   md += `\nUrl: ${location.href}`;
