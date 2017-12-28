@@ -8,8 +8,6 @@ const config = {
 const bugInstance = telebug(config);
 bugInstance.addCustomMessage(`From demo node.js`);
 
-setTimeout(() => qwerty(), 100);
-setTimeout(Promise.reject(new Error('woops')), 200);
-
-// syntax error
-eval('hoo bar');
+setTimeout(() => qwerty());
+setTimeout(() => Promise.reject(new Error('woops')));
+setTimeout(() => eval('hoo bar'));

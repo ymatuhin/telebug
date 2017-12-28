@@ -1,6 +1,8 @@
 import { corsError } from './config';
 import {
-  unhandled,
+  unhandledBrowserError,
+  unhandledNodeError,
+  unhandledPromise,
   consolePatch,
   getCommonInfo,
   getErrorInfo,
@@ -34,36 +36,53 @@ export default class Telebug {
   }
 
   init() {
-    unhandled(this.onUnhandled.bind(this));
+    unhandledNodeError(this.onNodeError.bind(this));
+    unhandledBrowserError(this.onBrowserError.bind(this));
+    unhandledPromise(this.onPromiseReject.bind(this));
     consolePatch(this.onConsole.bind(this));
   }
 
-  preventSend(markdown, errorInfo) {
-    if (!markdown.length) return true;
-
-    if (errorInfo && this.disableCorsMessage && errorInfo.message === corsError)
-      return true;
-
-    return false;
+  onNodeError(error = {}) {
+    const info = {};
+    if (error.message) info.message = error.message;
+    if (error.stack) info.stack = error.stack;
+    this.beforeSend(info);
   }
 
-  onUnhandled(error) {
-    const commonMd = getCommonInfo(this.customMessages);
-    const errorInfo = getErrorInfo(error);
-    const errorMd = createErrorMessage(errorInfo);
+  onBrowserError(message, filename, lineno, colno, error) {
+    const info = {};
+    info.message = message || error.message;
+    if (filename) info.filename = `${filename}:${lineno}:${colno}`;
+    if (error && error.stack) info.stack = error.stack;
+    this.beforeSend(info);
+  }
 
-    if (process.env.DEV) console.info(`# errorInfo`, errorInfo);
+  onPromiseReject(error = {}) {
+    const info = {};
 
-    if (this.preventSend(errorMd, errorInfo)) return;
-    this.sendMessage(`${commonMd}${errorMd}`);
+    const message = error.message || error.type;
+    if (message) info.message = message;
+
+    if (error.reason) info.reason = error.reason;
+    if (error.stack) info.stack = error.stack;
+    this.beforeSend(info);
   }
 
   onConsole(type, ...args) {
-    const commonMd = getCommonInfo(this.customMessages);
-    const consoleMd = createConsoleMessage(type, ...args);
+    const info = { console: type, consoleData: args };
+    this.beforeSend(info);
+  }
 
-    if (this.preventSend(consoleMd)) return;
-    this.sendMessage(`${commonMd}${consoleMd}`);
+  beforeSend(errorInfo) {
+    const isCors = /^Script error\.?$/.test(errorInfo.message);
+    if (this.disableCorsMessage && isCors) return;
+    if (isCors) errorInfo.message = corsError;
+
+    if (process.env.DEV) console.info(`# errorInfo`, errorInfo);
+
+    const commonHtml = getCommonInfo(this.customMessages);
+    const errorHtml = createErrorMessage(errorInfo);
+    this.sendMessage(`${commonHtml}${errorHtml}`);
   }
 
   sendMessage(text) {

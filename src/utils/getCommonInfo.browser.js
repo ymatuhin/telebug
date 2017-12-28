@@ -14,6 +14,8 @@ export default function getCommonInfo(customMessages) {
     md += `\<strong>${browser}</strong> on ${os} by telebug ${
       process.env.VERSION
     }`;
+  } else {
+    md += `${navigator.userAgent} by telebug ${process.env.VERSION}`;
   }
 
   const [width, height] = getBrowserSize();
