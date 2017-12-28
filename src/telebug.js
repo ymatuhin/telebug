@@ -59,11 +59,8 @@ export default class Telebug {
 
   onPromiseReject(error = {}) {
     const info = {};
-
-    const message = error.message || error.type;
-    if (message) info.message = message;
-
-    if (error.reason) info.reason = error.reason;
+    info.message = 'Unhadled promise rejection';
+    info.reason = error.reason;
     if (error.stack) info.stack = error.stack;
     this.beforeSend(info);
   }
