@@ -51,7 +51,7 @@ export default class Telebug {
 
   onBrowserError(message, filename, lineno, colno, error) {
     const info = {};
-    info.message = message || error.message;
+    info.message = error && error.message ? error.message : message;
     if (filename) info.filename = `${filename}:${lineno}:${colno}`;
     if (error && error.stack) info.stack = error.stack;
     this.beforeSend(info);
