@@ -1,8 +1,8 @@
 import { isBrowser } from './env';
 
 const httpPost = isBrowser
-  ? require('./http.post.browser')
-  : require('./http.post.node');
+  ? require('./http.post.browser').default
+  : require('./http.post.node').default;
 
 export default (chatId: string, botId: string, html: string) => {
   const params = {

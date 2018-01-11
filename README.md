@@ -18,8 +18,10 @@ telebug({
 * `botId` (String) — your bot id, it's required field
 * `chatId` (String) — chat id, it's required field
 * `hosts` (Array<string>) — accepted host from you want to recive messages, `[]` by default
+  <!--
 * `cors` (Boolean) — disable message about error inside external cross origin script, `false` by default
 * `customInfo` (Object) — (browser only) this info adds to every error notification
+  -->
 
 For example
 
