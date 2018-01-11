@@ -13,25 +13,8 @@ import {
 } from './utils';
 
 export default class Telebug {
-  constructor({
-    botId,
-    chatId,
-    activeHosts,
-    customMessages,
-    disableCorsMessage,
-  }) {
-    this.botId = botId;
-    this.chatId = chatId;
-    this.customMessages = customMessages || [];
-    this.disableCorsMessage = disableCorsMessage;
-    this.apiUrl = `https://api.telegram.org/bot${botId}/sendMessage`;
-
-    if (process.env.BROWSER) {
-      const currentHost = location.hostname || location.host;
-      const hostsDefined = activeHosts && activeHosts.length;
-      if (hostsDefined && activeHosts.indexOf(currentHost) === -1) return;
-    }
-
+  constructor(config) {
+    this.config = config;
     this.init();
   }
 
@@ -77,7 +60,7 @@ export default class Telebug {
 
     if (process.env.DEV) console.info(`# errorInfo`, errorInfo);
 
-    const commonHtml = getCommonInfo(this.customMessages);
+    const commonHtml = getCommonInfo();
     const errorHtml = createErrorMessage(errorInfo);
     this.sendMessage(`${commonHtml}${errorHtml}`);
   }
@@ -88,16 +71,14 @@ export default class Telebug {
       return;
     }
 
-    httpPost(this.apiUrl, {
-      chat_id: this.chatId,
+    const params = {
+      chat_id: this.config.chatId,
       disable_web_page_preview: true,
       parse_mode: 'html',
       text,
-    });
-  }
+    };
 
-  addCustomMessage(message) {
-    if (typeof message !== 'string') return;
-    this.customMessages.push(message);
+    const url = `https://api.telegram.org/bot${this.config.botId}/sendMessage`;
+    httpPost(url, params);
   }
 }

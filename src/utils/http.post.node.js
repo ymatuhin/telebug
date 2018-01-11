@@ -2,9 +2,7 @@ const https = require('https');
 
 export default (url, params) => {
   const [host, path] = url.slice(8).split('.org');
-
   const postData = JSON.stringify(params);
-
   const options = {
     hostname: host + '.org',
     path,
@@ -14,7 +12,6 @@ export default (url, params) => {
       'Content-Length': postData.length,
     },
   };
-
   const req = https.request(options);
   req.write(postData);
   req.end();

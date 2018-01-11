@@ -1,18 +1,18 @@
-import { validateParam, errorFactory } from './utils';
-import Telebug from './telebug';
+import validateConfig from './utils/validateConfig';
+import sendHtmlToTelegram from './utils/sendHtmlToTelegram';
 
-module.exports = function telebug(config = {}) {
-  if (telebug.inited) throw errorFactory('Telebug is already inited');
-  validateParam('config', config, Object, true);
-  validateParam('botId', config.botId, String, true);
-  validateParam('chatId', config.chatId, String, true);
+function telebug(config = {}) {
+  validateConfig(config);
+  const { chatId, botId } = config;
+  const publicApi = {};
+  const customInfo = config.customInfo || {};
 
-  validateParam('activeHosts', config.activeHosts, Array);
-  validateParam('customMessages', config.customMessages, Array);
-  validateParam('disableCorsMessage', config.disableCorsMessage, Boolean);
+  publicApi.version = process.env.VERSION;
+  publicApi.addCustomInfo = newInfo => Object.assign(customInfo, newInfo);
+  publicApi.sendMessage = html => sendHtmlToTelegram(chatId, botId, html);
 
   telebug.inited = true;
-  telebug.version = process.env.VERSION;
+  return publicApi;
+}
 
-  return new Telebug(config);
-};
+module.exports = telebug;
