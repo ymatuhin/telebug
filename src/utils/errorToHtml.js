@@ -15,10 +15,11 @@ export default function errorToHtml({
   stack,
   events,
 }) {
-  console.info(`# message`, message);
   let str = '';
   if (node) str += `<b>Node ${node}</b>`;
   if (isBrowser) str += `<b>${platform.description || userAgent}</b>`;
+  str += `by telebug ${process.env.VERSION}`;
+
   if (window) str += `\nWindow: ${window}`;
   if (href) str += `\nUrl: ${escape(href)}`;
   if (filename) str += `\nFile: ${escape(filename)}`;
