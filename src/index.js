@@ -21,7 +21,7 @@ function telebug(config = {}) {
   onError(error => {
     const lastEvents = watchUser.getEvents().slice(0, 10);
     const eventsList = lastEvents.map(event => event.toString()).join('\n    ');
-    error.events = `Latest events\n    ${eventsList}`;
+    if (eventsList) error.events = `Latest events\n    ${eventsList}`;
 
     if (!cors) {
       const isCors = error.message.toLowerCase().indexOf('script error') === 0;
