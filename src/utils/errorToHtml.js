@@ -15,6 +15,7 @@ export default function errorToHtml({
   stack,
   events,
 }) {
+  console.info(`# message`, message);
   let str = '';
   if (node) str += `<b>Node ${node}</b>`;
   if (isBrowser) str += `<b>${platform.description || userAgent}</b>`;

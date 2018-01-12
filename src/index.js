@@ -13,7 +13,6 @@ function telebug(config = {}) {
   const customInfo = config.customInfo || {};
   const publicApi = {};
 
-  publicApi.version = process.env.VERSION;
   publicApi.addCustomInfo = newInfo => Object.assign(customInfo, newInfo);
   publicApi.sendMessage = html => sendHtmlToTelegram(chatId, botId, html);
 
@@ -31,6 +30,7 @@ function telebug(config = {}) {
     publicApi.sendMessage(errorToHtml(error));
   });
 
+  telebug.version = process.env.VERSION;
   telebug.inited = true;
   return publicApi;
 }

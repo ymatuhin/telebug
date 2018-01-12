@@ -66,12 +66,12 @@
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
 
-"@ymatuhin/onerror@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@ymatuhin/onerror/-/onerror-0.1.3.tgz#aa245842d7b2b03d8a635034ea57f03f5395a569"
+"@ymatuhin/onerror@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@ymatuhin/onerror/-/onerror-0.1.4.tgz#359cfe90c12d47f2b008469e7fc64a63cdb503b7"
   dependencies:
+    json-stringify-safe "^5.0.1"
     lodash.throttle "^4.1.1"
-    lodash.upperfirst "^4.3.1"
 
 "@ymatuhin/watchuser@^0.1.4":
   version "0.1.4"
@@ -3571,7 +3571,7 @@ json-stable-stringify@^1.0.1:
   dependencies:
     jsonify "~0.0.0"
 
-json-stringify-safe@~5.0.1:
+json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 

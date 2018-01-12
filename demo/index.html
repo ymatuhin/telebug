@@ -37,6 +37,7 @@
   <div class="wrapper">
     <button onclick="Promise.reject(new Error('qwe'))">Promise.reject(new Error('qwe'))</button>
     <button onclick="Promise.reject(123)">Promise.reject(123)</button>
+    <button onclick="Promise.reject({ x: 1, y: 'qwe' })">Promise.reject(Object)</button>
     <button onclick="JSON.parse('{x,2')">json parse error</button>
     <button onclick="eval('hoo bar')">syntax error</button>
     <button onclick="throw new Error('<html>!@#$%^&*()_=+')">new Error()</button>
