@@ -1,9 +1,9 @@
 {
   "name": "telebug",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Notify about JavaScript errors to custom telegram channel",
-  "main": "./dist/index.js",
-  "browser": "./dist/index.umd.js",
+  "main": "./lib/telebug.js",
+  "browser": "./lib/telebug.js",
   "author": "Yury Matuhin <ym@ymatuhin.ru>",
   "homepage": "https://github.com/ymatuhin/telebug",
   "repository": {
