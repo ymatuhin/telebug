@@ -1,6 +1,6 @@
 {
   "name": "telebug",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Notify about JavaScript errors to custom telegram channel",
   "main": "./lib/telebug.js",
   "browser": "./lib/telebug.js",
